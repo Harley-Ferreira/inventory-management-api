@@ -1,10 +1,13 @@
 package com.harley.inventorymanagementapi.entities;
 
+import com.harley.inventorymanagementapi.dtos.ProductDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "product")
@@ -16,8 +19,11 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
+    @NotNull
+    @Column(name = "code")
+    private Long code;
     @NotNull
     @Column(name = "company_name")
     private String name;
@@ -27,7 +33,7 @@ public class Product {
 
     @NotNull
     @Column(name = "price")
-    private double price;
+    private BigDecimal price;
 
     @NotNull
     @Column(name = "category")
@@ -35,5 +41,15 @@ public class Product {
 
     @NotNull
     @Column(name = "minimum_stock")
-    private int minimumStock;
+    private Integer minimumStock;
+
+    public Product(ProductDTO productDTO) {
+        this.id = productDTO.id();
+        this.code = productDTO.code();
+        this.name = productDTO.name();
+        this.description = productDTO.description();
+        this.price = productDTO.price();
+        this.category = productDTO.category();
+        this.minimumStock = productDTO.minimumStock();
+    }
 }
