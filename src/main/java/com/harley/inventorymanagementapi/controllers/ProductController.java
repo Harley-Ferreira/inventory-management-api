@@ -2,7 +2,7 @@ package com.harley.inventorymanagementapi.controllers;
 
 import com.harley.inventorymanagementapi.dtos.ProductDTO;
 import com.harley.inventorymanagementapi.entities.Product;
-import com.harley.inventorymanagementapi.services.ProductService;
+import com.harley.inventorymanagementapi.services.interfaces.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,7 +34,7 @@ public class ProductController {
     @PutMapping("{id}")
     public ResponseEntity<ProductDTO> update (@PathVariable("id") Long id, @RequestBody @Valid ProductDTO productDTO) {
         var product = new Product(productDTO);
-        product = productService.update(id, product);
+        product = productService.update(product);
         return ResponseEntity.ok(new ProductDTO(product));
     }
 

@@ -6,7 +6,7 @@ import com.harley.inventorymanagementapi.entities.Product;
 import com.harley.inventorymanagementapi.exceptions.ExistsObjectInDBException;
 import com.harley.inventorymanagementapi.exceptions.ObjectNotFoundBDException;
 import com.harley.inventorymanagementapi.factories.ProductFactory;
-import com.harley.inventorymanagementapi.services.ProductService;
+import com.harley.inventorymanagementapi.services.interfaces.ProductService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -79,7 +79,7 @@ public class ProductControllerTest {
     @Test
     void GivenProductDTO_WhenCallRegister_ThenThrowAnException() throws Exception {
         // Scenary
-        String errorMessage = "Já existe um funcionário com este crm.";
+        String errorMessage = "Já existe um produto com este código.";
         BDDMockito.given(productService.register(any(Product.class))).willThrow(new ExistsObjectInDBException(errorMessage));
 
         var productDTO = ProductFactory.createNewProductDTO();
@@ -102,7 +102,7 @@ public class ProductControllerTest {
     void GivenAnIdAndProductDTO_WhenCallUpdate_ThenSaveAndReturnProduct() throws Exception {
         // Scenary
         var product = createNewProduct();
-        BDDMockito.given(productService.update(anyLong(), any(Product.class))).willReturn(product);
+        BDDMockito.given(productService.update(any(Product.class))).willReturn(product);
 
         var productDTO = ProductFactory.createNewProductDTO();
         String json = new ObjectMapper().writeValueAsString(productDTO);
@@ -124,7 +124,7 @@ public class ProductControllerTest {
     void GivenAnIdAndProductDTO_WhenCallUpdate_ThenThrowAnException() throws Exception {
         // Scenary
         String errorMessage = "Não foi possivel encontrar o produto.";
-        BDDMockito.given(productService.update(anyLong(), any(Product.class))).willThrow(new ObjectNotFoundBDException(errorMessage));
+        BDDMockito.given(productService.update(any(Product.class))).willThrow(new ObjectNotFoundBDException(errorMessage));
 
         var productDTO = ProductFactory.createNewProductDTO();
         String json = new ObjectMapper().writeValueAsString(productDTO);
@@ -209,29 +209,13 @@ public class ProductControllerTest {
     @Test
     void GivenAnId_WhenCallDeleteProductById_ThenDeleteProductAndReturnStatus204() throws Exception {
         // Scenary
-        BDDMockito.given(productService.getById(anyLong())).willReturn(createNewProduct(1L));
 
         // Execution and Verification
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .delete(PRODUCT_URL.concat("/" + 1));
+                .delete(PRODUCT_URL.concat("/" + 1L));
 
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
-        Mockito.verify(productService, times(1)).delete(anyLong());
-    }
-
-    @Test
-    void GivenAnId_WhenCallDeleteProductById_ThenThrowAnException() throws Exception {
-        // Scenary
-        String errorMessage = "Não foi possível encontrar o produto.";
-        BDDMockito.given(productService.getById(anyLong())).willThrow(new ObjectNotFoundBDException(errorMessage));
-
-        // Execution and Verification
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .delete(PRODUCT_URL.concat("/" + 1));
-
-        mockMvc.perform(request)
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        Mockito.verify(productService, never()).delete(anyLong());
+        Mockito.verify(productService, times(1)).delete(1L);
     }
 }
