@@ -11,7 +11,7 @@ public interface ProductService {
 
     Product getById(Long id);
 
-    Page<Product> getPageProducts(Pageable pageable);
+    Page<Product> getPageProducts(Pageable pageable, String filter);
 
     void delete(Long id);
 }

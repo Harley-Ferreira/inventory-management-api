@@ -6,20 +6,20 @@ import com.harley.inventorymanagementapi.exceptions.ObjectNotFoundBDException;
 import com.harley.inventorymanagementapi.repositories.ProductRepository;
 import com.harley.inventorymanagementapi.services.interfaces.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import static org.springframework.data.domain.ExampleMatcher.StringMatcher.CONTAINING;
+import static org.springframework.data.domain.ExampleMatcher.matching;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    private final static String OBJECT_NOT_FOUND_MESSAGE = "Não foi possível encontrar o produto.";
-    private final static String OBJECT_EXIST_MESSAGE = "Já existe um produto com este código.";
-    private final static String INVALID_ID = "O id do produto é inválido";
+
     @Override
     public Product register(Product product) {
         if (product == null) throw new IllegalArgumentException("O objeto produto é inválido.");
@@ -47,8 +47,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> getPageProducts(Pageable pageable) {
-        return productRepository.findAll(pageable);
+    public Page<Product> getPageProducts(Pageable pageable, String filter) {
+        Product product = new Product();
+        if (!filter.isBlank()) {
+            try {
+                product.setCode(Long.valueOf(filter));
+            } catch (NumberFormatException e) {
+                product.setName(filter);
+            }
+        }
+
+        Example<Product> example = Example.of(product, matching()
+                .withIgnoreNullValues()
+                .withIgnoreCase()
+                .withStringMatcher(CONTAINING));
+
+        return productRepository.findAll(example, pageable);
     }
 
     @Override

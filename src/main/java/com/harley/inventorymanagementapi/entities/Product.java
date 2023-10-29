@@ -1,6 +1,6 @@
 package com.harley.inventorymanagementapi.entities;
 
-import com.harley.inventorymanagementapi.dtos.ProductDTO;
+import com.harley.inventorymanagementapi.dtos.product.ProductDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.harley.inventorymanagementapi.dtos;
+package com.harley.inventorymanagementapi.dtos.product;
 
 import com.harley.inventorymanagementapi.entities.Product;
 

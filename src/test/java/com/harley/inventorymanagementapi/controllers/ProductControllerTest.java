@@ -1,13 +1,14 @@
 package com.harley.inventorymanagementapi.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.harley.inventorymanagementapi.dtos.ProductDTO;
+import com.harley.inventorymanagementapi.dtos.product.ProductDTO;
 import com.harley.inventorymanagementapi.entities.Product;
 import com.harley.inventorymanagementapi.exceptions.ExistsObjectInDBException;
 import com.harley.inventorymanagementapi.exceptions.ObjectNotFoundBDException;
 import com.harley.inventorymanagementapi.factories.ProductFactory;
 import com.harley.inventorymanagementapi.services.interfaces.ProductService;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
@@ -26,14 +27,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 
 import static com.harley.inventorymanagementapi.factories.ProductFactory.createNewProduct;
 import static com.harley.inventorymanagementapi.factories.ProductFactory.createNewProductDTO;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -51,7 +52,14 @@ public class ProductControllerTest {
     ProductService productService;
 
     @Autowired
+    WebApplicationContext webApplicationContext;
+
     MockMvc mockMvc;
+
+    @BeforeEach
+    void setup() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
 
     // REGISTER
     @Test
@@ -188,11 +196,11 @@ public class ProductControllerTest {
         Product product1 = createNewProduct(1L);
         Product product2 = createNewProduct(2L);
 
-        BDDMockito.given(productService.getPageProducts(Mockito.any(Pageable.class)))
+        BDDMockito.given(productService.getPageProducts(Mockito.any(Pageable.class), Mockito.anyString()))
                 .willReturn(new PageImpl<>(Arrays.asList(product1, product2), PageRequest.of(0, 100), 2));
 
         // Execution and Verification
-        String url = String.format("?page=0&size=100");
+        String url = String.format("?page=0&size=100&filter=");
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get(PRODUCT_URL.concat(url))
                 .accept(MediaType.APPLICATION_JSON);

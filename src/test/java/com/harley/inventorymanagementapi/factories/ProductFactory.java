@@ -1,6 +1,6 @@
 package com.harley.inventorymanagementapi.factories;
 
-import com.harley.inventorymanagementapi.dtos.ProductDTO;
+import com.harley.inventorymanagementapi.dtos.product.ProductDTO;
 import com.harley.inventorymanagementapi.entities.Product;
 
 import java.math.BigDecimal;

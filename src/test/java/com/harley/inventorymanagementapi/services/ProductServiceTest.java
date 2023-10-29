@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
@@ -175,10 +176,10 @@ public class ProductServiceTest {
         PageRequest request = PageRequest.of(0, 10);
         List<Product> productList = Arrays.asList(createNewProduct(2l), createNewProduct(3l));
         var page = new PageImpl<>(productList, request, productList.size());
-        when(productRepository.findAll(any(PageRequest.class))).thenReturn(page);
+        when(productRepository.findAll(any(Example.class), any(PageRequest.class))).thenReturn(page);
 
         // Execution
-        var result = productService.getPageProducts(request);
+        var result = productService.getPageProducts(request, "");
 
         // Verification
         assertEquals(2, result.getTotalElements());

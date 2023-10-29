@@ -1,6 +1,7 @@
 package com.harley.inventorymanagementapi.controllers;
 
-import com.harley.inventorymanagementapi.dtos.ProductDTO;
+import com.harley.inventorymanagementapi.dtos.product.ProductDTO;
+import com.harley.inventorymanagementapi.dtos.product.ProductPageDTO;
 import com.harley.inventorymanagementapi.entities.Product;
 import com.harley.inventorymanagementapi.services.interfaces.ProductService;
 import jakarta.validation.Valid;
@@ -44,11 +45,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public Page<ProductDTO> getById(@PageableDefault(sort = "name")Pageable pageable) {
-        Page<Product> productPage = productService.getPageProducts(pageable);
-        List<ProductDTO> list = productPage.getContent()
+    public Page<ProductPageDTO> getByPage(@PageableDefault(sort = "code") Pageable pageable, @RequestParam("filter") String filter) {
+        Page<Product> productPage = productService.getPageProducts(pageable, filter);
+        List<ProductPageDTO> list = productPage.getContent()
                 .stream()
-                .map(ProductDTO::new)
+                .map(ProductPageDTO::new)
                 .toList();
         return new PageImpl<>(list, pageable, productPage.getTotalElements());
     }
